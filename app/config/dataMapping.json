@@ -1,0 +1,73 @@
+{
+    "coreFields": [
+        "policy_number",
+        "insured_amount",
+        "start_date",
+        "end_date",
+        "renewal_date",
+        "effective_date",
+        "premium",
+        "policy_fee",
+        "admin_fee",
+        "ipt_amount",
+        "commission",
+        "business_description",
+        "client_type",
+        "policy_type",
+        "product",
+        "root_policy_ref",
+        "insurer_policy_number",
+        "insurer",
+        "customer"
+    ],
+    "brokers": [
+        {
+            "name": "broker1",
+            "fieldsMapping": {
+                "policy_number": "PolicyNumber",
+                "insured_amount": "InsuredAmount",
+                "start_date": "StartDate",
+                "end_date": "EndDate",
+                "renewal_date": "RenewalDate",
+                "effective_date": "EffectiveDate",
+                "premium": "Premium",
+                "policy_fee": "PolicyFee",
+                "admin_fee": "AdminFee",
+                "ipt_amount": "IPTAmount",
+                "commission": "Commission",
+                "business_description": "BusinessDescription",
+                "client_type": "ClientType",
+                "policy_type": "PolicyType",
+                "product": "Product",
+                "root_policy_ref": "RootPolicyRef",
+                "insurer_policy_number": "InsurerPolicyNumber",
+                "insurer": "Insurer",
+                "customer": "ClientRef"
+            }
+        },
+        {
+            "name": "broker2",
+            "fieldsMapping": {
+                "policy_number": "PolicyRef",
+                "insured_amount": "CoverageAmount",
+                "start_date": "ActivationDate",
+                "end_date": "ExpirationDate",
+                "renewal_date": "NextRenewalDate",
+                "effective_date": "InitiationDate",
+                "premium": "CoverageCost",
+                "policy_fee": "ContractFee",
+                "admin_fee": "AdminCharges",
+                "ipt_amount": "TaxAmount",
+                "commission": "BrokerFee",
+                "business_description": "CompanyDescription",
+                "client_type": "ConsumerCategory",
+                "policy_type": "ContractCategory",
+                "product": "InsurancePlan",
+                "root_policy_ref": "PrimaryPolicyRef",
+                "insurer_policy_number": "InsuranceCompanyRef",
+                "insurer": "Underwriter",
+                "customer": "ConsumerID"
+            }
+        }
+    ]
+}
