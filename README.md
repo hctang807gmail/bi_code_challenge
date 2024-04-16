@@ -11,5 +11,11 @@ A command line tools for importing different format of CSV and displaying some a
   - Configuration file defined the core fields and mapping of csv column from different data source
  
 ## Usage
-- git clone 
+- Download the project
+- cd <project_folder>
+- start.bat / start.sh (depends on platform)
+
+## Todo
+- Enhance error handling
+- Enrich Unit Testing
 
