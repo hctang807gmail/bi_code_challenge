@@ -34,8 +34,6 @@ public class CodeChallenge
             MysqlDataSource mysqlDataSource = new MysqlDataSource(reader, uploadFolderPath);
             IImportData importData = mysqlDataSource;
             IQueryInfo queryInfo = mysqlDataSource;
-//            importData.importData();
-//            queryInfo.getPolicySummary();
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             boolean quit = false;
             while (quit == false) {
@@ -45,7 +43,7 @@ public class CodeChallenge
                     switch (input) {
                         case "1":
                             int total = importData.importData();
-                            System.out.println(String.format("%d records imported.", total));
+                            printImportResult(total);                            
                             break;
                         case "2":
                             PolicySummary policySummary = queryInfo.getPolicySummary();
@@ -64,6 +62,7 @@ public class CodeChallenge
                             System.out.println("Invalid option.");
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     System.out.println(e.getMessage());
                 }
             }
@@ -81,20 +80,33 @@ public class CodeChallenge
         return "N/A";
     }
 
+    private static void printImportResult(int total) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println(String.format("%d records imported.", total));
+        System.out.print("Press enter to continue...");
+        br.readLine();
+    }
+
     private static void printPolicyList(String brokerName, List<PolicyRecord> list) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         boolean printEnd = false;
-        for (int i = 0 ; i < list.size() ; i++) {
-            if ((i+1) % 10 == 1) {
-                printEnd = false;
-                System.out.println(String.format("Policy by broker:[%s]", brokerName));
-            }
-            PolicyRecord record = list.get(i);
-            System.out.println(String.format("PolicyNumber:[%10s], Customer:[%10s], InsuredAmount:[%15s], StartDate:[%10s], EndDate:[%10s]", record.getPolicyNumber(), record.getCustomer(), record.getInsuredAmount(), convertDateToString(record.getStartDate()), convertDateToString(record.getEndDate())));
-            if ((i+1) % 10 == 0) {
-                System.out.print("Press enter to continue...");
-                br.readLine();
-                printEnd = true;
+        int pageNo = 1;
+        if (list.size() == 0) {
+            System.out.println(String.format("No policy for broker:[%s]", brokerName));
+        } else {
+            for (int i = 0 ; i < list.size() ; i++) {
+                if ((i+1) % 10 == 1) {
+                    printEnd = false;
+                    clearnConsole();
+                    System.out.println(String.format("Policy by broker:[%s], pageNo:[%d]", brokerName, pageNo++));
+                }
+                PolicyRecord record = list.get(i);
+                System.out.println(String.format("PolicyNumber:[%10s], Customer:[%10s], InsuredAmount:[%15s], StartDate:[%10s], EndDate:[%10s]", record.getPolicyNumber(), record.getCustomer(), record.getInsuredAmount(), convertDateToString(record.getStartDate()), convertDateToString(record.getEndDate())));
+                if ((i+1) % 10 == 0) {
+                    System.out.print("Press enter to continue...");
+                    br.readLine();
+                    printEnd = true;
+                }
             }
         }
         if (printEnd == false) {
@@ -105,6 +117,7 @@ public class CodeChallenge
 
     private static void printPolicySummary(PolicySummary policySummary) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        clearnConsole();
         System.out.println(String.format("Number of active policy:                              [%15d]", policySummary.getPolicyCount()));
         System.out.println(String.format("Number of customer with active policy:                [%15d]", policySummary.getCustomerCount()));
         System.out.println(String.format("Sum of insured amount:                                [%15.2f]", policySummary.getSumOfInsuredAmount()));
@@ -113,7 +126,13 @@ public class CodeChallenge
         br.readLine();
     }
 
+    private static void clearnConsole() {
+        System.out.print("\033[H\033[2J");  
+        System.out.flush();
+    }
+
     private static void printMainMenu() throws IOException {
+        clearnConsole();
         System.out.println(String.format("1. Import from upload folder [%s]", uploadFolderPath));
         System.out.println(String.format("2. Display policy summary"));
         System.out.println(String.format("3. Display policy by broker"));

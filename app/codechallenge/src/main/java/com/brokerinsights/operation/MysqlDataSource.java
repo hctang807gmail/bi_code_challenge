@@ -178,6 +178,9 @@ public class MysqlDataSource implements IImportData, IQueryInfo {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (result == null) {
+            result = "0";
+        }
         return result;
     }
 }

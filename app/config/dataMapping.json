@@ -17,7 +17,7 @@
         "product",
         "root_policy_ref",
         "insurer_policy_number",
-        "insurer",
+        "insurer", 
         "customer"
     ],
     "brokers": [
