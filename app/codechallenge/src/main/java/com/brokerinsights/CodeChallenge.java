@@ -88,6 +88,7 @@ public class CodeChallenge
 
     private static void printImportResult(int total) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        clearnConsole();
         System.out.println(String.format("%d records imported.", total));
         System.out.print("Press enter to continue...");
         br.readLine();
