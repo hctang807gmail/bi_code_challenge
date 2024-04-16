@@ -19,6 +19,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.lang.Thread;
+
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+import java.lang.InterruptedException;
+
 
 public class MysqlDataSource implements IImportData, IQueryInfo {
     private IDataReader reader;
@@ -40,9 +45,13 @@ public class MysqlDataSource implements IImportData, IQueryInfo {
     private String queryAveragePolicyDurationAsOfToday = "select avg(timestampdiff(DAY, start_date, now())) from broker_policy where start_date < now() and renewal_date > now();";
 
 
-    public MysqlDataSource(IDataReader reader, String uploadPath) {
+    public MysqlDataSource(IDataReader reader, String uploadPath) throws SQLException, InterruptedException {
         this.reader = reader;
         this.uploadPath = uploadPath;
+        Connection connection = getConnection();
+        if (connection != null) {
+            connection.close();
+        }
     }
 
     private JsonNode convertMapToJson(HashMap<String, String> map) {
@@ -61,8 +70,22 @@ public class MysqlDataSource implements IImportData, IQueryInfo {
         return null;
     }
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, username, password);
+    private Connection getConnection() throws SQLException, InterruptedException {
+        int retryCount = 0;
+        while (retryCount < 10) {
+            try {
+                retryCount++;
+                return DriverManager.getConnection(url, username, password);
+            } catch (CommunicationsException ce) {
+                if (retryCount == 1) {
+                    System.out.print("Waiting for mysql server.");
+                } else {
+                    System.out.print(".");
+                }
+                Thread.sleep(2000);
+            }            
+        }
+        return null;
     }
 
     public int importData() {
@@ -151,6 +174,7 @@ public class MysqlDataSource implements IImportData, IQueryInfo {
                 record.setCustomer(rs.getString("customer"));
                 result.add(record);
             }
+            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -175,6 +199,7 @@ public class MysqlDataSource implements IImportData, IQueryInfo {
             while (rs.next()) {
                 result = rs.getString(1);
             }
+            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
