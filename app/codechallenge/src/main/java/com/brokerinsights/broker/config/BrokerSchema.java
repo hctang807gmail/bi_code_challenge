@@ -2,9 +2,7 @@ package com.brokerinsights.broker.config;
 
 import java.io.Reader;
 import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,17 +14,16 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Arrays;
 
+import java.io.IOException;
+
 public class BrokerSchema {
 
     private String configPath;
     private List<String> coreFields = new ArrayList<String>();
     private List<Broker> brokerList = new ArrayList<Broker>();
 
-    public BrokerSchema(String configPath) {
+    public BrokerSchema(String content) {
         try {
-            this.configPath = configPath;
-            Path mappingPath = Paths.get(this.configPath);
-            String content = Files.readString(mappingPath);
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode json = objectMapper.readTree(content);
 

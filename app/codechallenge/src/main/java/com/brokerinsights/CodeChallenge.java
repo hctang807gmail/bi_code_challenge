@@ -22,6 +22,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class CodeChallenge 
 {
     static String dataMappingPath = "/broker_insights/config/dataMapping.json";
@@ -29,7 +33,9 @@ public class CodeChallenge
     public static void main( String[] args )
     {
         try {
-            BrokerSchema brokerSchema = new BrokerSchema(dataMappingPath);
+            Path mappingPath = Paths.get(dataMappingPath);
+            String mappingJson = Files.readString(mappingPath);
+            BrokerSchema brokerSchema = new BrokerSchema(mappingJson);
             IDataReader reader = new CsvReader(brokerSchema);
             MysqlDataSource mysqlDataSource = new MysqlDataSource(reader, uploadFolderPath);
             IImportData importData = mysqlDataSource;

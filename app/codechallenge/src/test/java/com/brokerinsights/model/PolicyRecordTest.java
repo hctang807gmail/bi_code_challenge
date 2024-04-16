@@ -10,9 +10,6 @@ import java.text.SimpleDateFormat;
 
 import java.text.ParseException;
 
-/**
- * Unit test for simple App.
- */
 public class PolicyRecordTest 
 {
     @Test
