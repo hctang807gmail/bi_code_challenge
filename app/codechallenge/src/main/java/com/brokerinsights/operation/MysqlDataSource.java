@@ -98,43 +98,45 @@ public class MysqlDataSource implements IImportData, IQueryInfo {
             if (file.isFile()) {
                 try {
                     int count = 0;
-                    Connection connection = getConnection();
-                    connection.setAutoCommit(false);
                     List<PolicyRecord> records = this.reader.readData(file.getPath());
-                    String extraFields = "";
-                    for (PolicyRecord record: records) {
-                        JsonNode json = convertMapToJson(record.getExtraFields());
-                        extraFields = ((JsonNode)json).toString();
-                        PreparedStatement stmt = connection.prepareStatement(insertSql);
-                        stmt.setString(1, record.getBrokerName());
-                        stmt.setString(2, record.getPolicyNumber());
-                        stmt.setDouble(3, record.getInsuredAmount());
-                        stmt.setDate(4, getSqlDate(record.getStartDate()));
-                        stmt.setDate(5, getSqlDate(record.getEndDate()));
-                        stmt.setDate(6, getSqlDate(record.getRenewalDate()));
-                        stmt.setDate(7, getSqlDate(record.getEffectiveDate()));
-                        stmt.setString(8, record.getPremium());
-                        stmt.setDouble(9, record.getPolicyFee());
-                        stmt.setDouble(10, record.getAdminFee());
-                        stmt.setDouble(11, record.getIptAmount());
-                        stmt.setDouble(12, record.getCommission());
-                        stmt.setString(13, record.getBusinessDescription());
-                        stmt.setString(14, record.getClientType());
-                        stmt.setString(15, record.getPolicyType());
-                        stmt.setString(16, record.getProduct());
-                        stmt.setString(17, record.getRootPolicyRef());
-                        stmt.setString(18, record.getInsurerPolicyNumber());
-                        stmt.setString(19, record.getInsurer());
-                        stmt.setString(20, record.getCustomer());
-                        stmt.setString(21, extraFields);
-                        stmt.executeUpdate();
-                        count++;
+                    if (records.size() != 0) {
+                        String extraFields = "";
+                        Connection connection = getConnection();
+                        connection.setAutoCommit(false);
+                        for (PolicyRecord record: records) {
+                            JsonNode json = convertMapToJson(record.getExtraFields());
+                            extraFields = ((JsonNode)json).toString();
+                            PreparedStatement stmt = connection.prepareStatement(insertSql);
+                            stmt.setString(1, record.getBrokerName());
+                            stmt.setString(2, record.getPolicyNumber());
+                            stmt.setDouble(3, record.getInsuredAmount());
+                            stmt.setDate(4, getSqlDate(record.getStartDate()));
+                            stmt.setDate(5, getSqlDate(record.getEndDate()));
+                            stmt.setDate(6, getSqlDate(record.getRenewalDate()));
+                            stmt.setDate(7, getSqlDate(record.getEffectiveDate()));
+                            stmt.setString(8, record.getPremium());
+                            stmt.setDouble(9, record.getPolicyFee());
+                            stmt.setDouble(10, record.getAdminFee());
+                            stmt.setDouble(11, record.getIptAmount());
+                            stmt.setDouble(12, record.getCommission());
+                            stmt.setString(13, record.getBusinessDescription());
+                            stmt.setString(14, record.getClientType());
+                            stmt.setString(15, record.getPolicyType());
+                            stmt.setString(16, record.getProduct());
+                            stmt.setString(17, record.getRootPolicyRef());
+                            stmt.setString(18, record.getInsurerPolicyNumber());
+                            stmt.setString(19, record.getInsurer());
+                            stmt.setString(20, record.getCustomer());
+                            stmt.setString(21, extraFields);
+                            stmt.executeUpdate();
+                            count++;
+                        }
+                        connection.commit();
+                        connection.setAutoCommit(true);
+                        connection.close();
+                        totalCount += count;
+                        file.renameTo(new File(this.uploadPath + "/imported/" + file.getName()));
                     }
-                    connection.commit();
-                    connection.setAutoCommit(true);
-                    connection.close();
-                    totalCount += count;
-                    file.renameTo(new File(this.uploadPath + "/imported/" + file.getName()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

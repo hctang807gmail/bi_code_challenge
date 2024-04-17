@@ -48,6 +48,7 @@ public class CodeChallenge
                     String input = br.readLine();
                     switch (input) {
                         case "1":
+                            clearnConsole();
                             int total = importData.importData();
                             printImportResult(total);                            
                             break;
@@ -88,7 +89,6 @@ public class CodeChallenge
 
     private static void printImportResult(int total) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        clearnConsole();
         System.out.println(String.format("%d records imported.", total));
         System.out.print("Press enter to continue...");
         br.readLine();
